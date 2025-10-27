@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CloudHealth Policy JSON Transformer</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>CloudHealth Policy JSON Transformer</h1>
+            <p class="subtitle">Remove IDs and clean up policy JSON for import</p>
+        </header>
+
+        <div class="main-content">
+            <div class="upload-section">
+                <div class="file-input-wrapper">
+                    <label for="fileInput" class="file-label">
+                        <svg class="upload-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                        <span id="fileNameDisplay">Choose JSON file or drag & drop</span>
+                    </label>
+                    <input type="file" id="fileInput" accept=".json" />
+                </div>
+            </div>
+
+            <div class="textarea-section">
+                <div class="input-panel">
+                    <h2>Original JSON</h2>
+                    <textarea id="inputJson" placeholder="Or paste your CloudHealth policy JSON here..."></textarea>
+                </div>
+
+                <div class="output-panel">
+                    <h2>Transformed JSON</h2>
+                    <textarea id="outputJson" readonly placeholder="Transformed JSON will appear here..."></textarea>
+                </div>
+            </div>
+
+            <div class="button-section">
+                <button id="transformBtn" class="btn btn-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="23 4 23 10 17 10"></polyline>
+                        <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                    </svg>
+                    Transform
+                </button>
+                <button id="downloadBtn" class="btn btn-success" disabled>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    Download JSON
+                </button>
+                <button id="clearBtn" class="btn btn-secondary">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="3 6 5 6 21 6"></polyline>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    </svg>
+                    Clear
+                </button>
+            </div>
+
+            <div id="statusMessage" class="status-message"></div>
+        </div>
+
+        <footer>
+            <p>Created for CloudHealth Policy Management</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
