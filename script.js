@@ -82,6 +82,79 @@ themeToggle.addEventListener('click', () => {
 // Initialize theme on page load
 initTheme();
 
+// Copy output to clipboard
+function copyOutput(textareaId) {
+    const textarea = document.getElementById(textareaId);
+    if (!textarea || !textarea.value.trim()) {
+        showStatus('Nothing to copy!', 'error');
+        return;
+    }
+    
+    textarea.select();
+    textarea.setSelectionRange(0, 99999); // For mobile devices
+    
+    navigator.clipboard.writeText(textarea.value).then(() => {
+        showStatus('✓ Copied to clipboard!', 'success');
+    }).catch(err => {
+        // Fallback for older browsers
+        document.execCommand('copy');
+        showStatus('✓ Copied to clipboard!', 'success');
+    });
+}
+
+// Download output as file
+function downloadOutput(textareaId, type) {
+    const textarea = document.getElementById(textareaId);
+    if (!textarea || !textarea.value.trim()) {
+        showStatus('Nothing to download!', 'error');
+        return;
+    }
+    
+    const content = textarea.value;
+    const blob = new Blob([content], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${originalFileName}_transformed.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    showStatus('✓ File downloaded successfully!', 'success');
+}
+
+// Clear specific textarea
+function clearTextarea(textareaId) {
+    const textarea = document.getElementById(textareaId);
+    if (textarea) {
+        textarea.value = '';
+        if (textareaId === 'inputJson') {
+            fileNameDisplay.textContent = 'Choose JSON file or drag & drop';
+            fileInput.value = '';
+        }
+        showStatus('Content cleared', 'success');
+    }
+}
+
+// Prettify JSON in textarea
+function prettifyJson(textareaId) {
+    const textarea = document.getElementById(textareaId);
+    if (!textarea || !textarea.value.trim()) {
+        showStatus('Nothing to prettify!', 'error');
+        return;
+    }
+    
+    try {
+        const json = JSON.parse(textarea.value);
+        textarea.value = JSON.stringify(json, null, 4);
+        showStatus('✓ JSON prettified!', 'success');
+    } catch (error) {
+        showStatus('Invalid JSON: ' + error.message, 'error');
+    }
+}
+
 // File input handler
 fileInput.addEventListener('change', handleFileSelect);
 
@@ -118,7 +191,14 @@ function handleFileSelect(event) {
     reader.onload = (e) => {
         try {
             const content = e.target.result;
-            inputJson.value = content;
+            // Auto-prettify the loaded JSON
+            try {
+                const json = JSON.parse(content);
+                inputJson.value = JSON.stringify(json, null, 4);
+            } catch {
+                // If it's not valid JSON, just load as-is
+                inputJson.value = content;
+            }
             showStatus('File loaded successfully! Click Transform to process.', 'success');
         } catch (error) {
             showStatus('Error reading file: ' + error.message, 'error');
@@ -154,6 +234,7 @@ function transformJSON() {
                 const parsedJson = JSON.parse(input);
                 transformedData = transformPolicy(parsedJson);
                 
+                // Prettify output JSON with 4-space indentation
                 outputJson.value = JSON.stringify(transformedData, null, 4);
                 downloadBtn.disabled = false;
                 showStatus('✓ Transformation successful! Ready to download.', 'success');
