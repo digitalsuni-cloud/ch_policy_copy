@@ -14,6 +14,30 @@ const loadingIndicator = document.getElementById('loadingIndicator');
 let transformedData = null;
 let originalFileName = 'policy';
 
+// Clear all data on page load (fresh start on every refresh)
+window.addEventListener('load', () => {
+    // Clear input and output fields
+    if (inputJson) inputJson.value = '';
+    if (outputJson) outputJson.value = '';
+    if (fileInput) fileInput.value = '';
+    if (fileNameDisplay) fileNameDisplay.textContent = 'Choose JSON file or drag & drop';
+    
+    // Reset variables
+    transformedData = null;
+    originalFileName = 'policy';
+    
+    // Disable download button
+    if (downloadBtn) downloadBtn.disabled = true;
+    
+    // Clear status message
+    if (statusMessage) {
+        statusMessage.textContent = '';
+        statusMessage.className = 'status-message';
+    }
+    
+    // Note: We do NOT clear theme preference - user's theme choice persists
+});
+
 // Theme Toggle Functionality with Auto Detection
 function initTheme() {
     // Check if user has a saved preference
