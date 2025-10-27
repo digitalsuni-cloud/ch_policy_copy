@@ -96,6 +96,20 @@
             </div>
 
             <div id="statusMessage" class="status-message"></div>
+
+            <!-- Browser Console Import Script Section -->
+            <div class="console-section">
+                <h2>Browser Console Import Script</h2>
+                <p class="console-description">Copy and paste this script into your browser's console on the CloudHealth Policies page to import the transformed policy.</p>
+                <div class="output-area">
+                    <textarea id="consoleScript" readonly placeholder="Transform JSON first to generate console import script..."></textarea>
+                    <div class="icon-actions">
+                        <button class="icon-button" onclick="copyOutput('consoleScript')" title="Copy to clipboard" aria-label="Copy console script to clipboard">
+                            📋
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <footer>
