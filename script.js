@@ -4,6 +4,7 @@ const fileNameDisplay = document.getElementById('fileNameDisplay');
 const fileLabel = document.querySelector('.file-label');
 const inputJson = document.getElementById('inputJson');
 const outputJson = document.getElementById('outputJson');
+const consoleScript = document.getElementById('consoleScript');
 const inputJsonViewer = document.getElementById('inputJsonViewer');
 const outputJsonViewer = document.getElementById('outputJsonViewer');
 const transformBtn = document.getElementById('transformBtn');
@@ -21,6 +22,7 @@ window.addEventListener('load', () => {
     // Clear input and output fields
     if (inputJson) inputJson.value = '';
     if (outputJson) outputJson.value = '';
+    if (consoleScript) consoleScript.value = '';
     if (inputJsonViewer) inputJsonViewer.innerHTML = '';
     if (outputJsonViewer) outputJsonViewer.innerHTML = '';
     if (fileInput) fileInput.value = '';
@@ -85,6 +87,13 @@ themeToggle.addEventListener('click', () => {
 
 // Initialize theme on page load
 initTheme();
+
+// Generate console import script
+function generateConsoleScript(jsonData) {
+    const jsonString = JSON.stringify(jsonData);
+    const script = `var payload = \`${jsonString}\`; var csrf_token = document.querySelector('meta[name = "csrf-token"]').getAttribute("content"); var xhr = new XMLHttpRequest(); xhr.open('POST', 'https://apps.cloudhealthtech.com/policies.json', false); xhr.setRequestHeader('Content-Type', 'application/json'); xhr.setRequestHeader('Accept', 'application/json, text/plain, */*'); xhr.setRequestHeader('X-XSRF-TOKEN', csrf_token); xhr.send(payload); console.log(xhr.response);`;
+    return script;
+}
 
 // Syntax highlight JSON
 function syntaxHighlight(json) {
@@ -312,6 +321,9 @@ function transformJSON() {
                 outputJson.value = prettified;
                 renderJsonWithHighlight(prettified, 'outputJsonViewer', 'outputJson');
                 
+                // Generate console script
+                consoleScript.value = generateConsoleScript(transformedData);
+                
                 downloadBtn.disabled = false;
                 showStatus('✓ Transformation successful! Ready to download.', 'success');
             } catch (error) {
@@ -490,6 +502,7 @@ function downloadJSON() {
 function clearAll() {
     inputJson.value = '';
     outputJson.value = '';
+    consoleScript.value = '';
     inputJson.style.display = 'block';
     outputJson.style.display = 'block';
     inputJsonViewer.classList.remove('active');
