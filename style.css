@@ -174,11 +174,21 @@ header h1 {
     font-weight: 600;
 }
 
-textarea {
+/* Output Area with Icon Actions */
+.output-area {
+    position: relative;
+    background-color: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    padding: 0;
+}
+
+.output-area textarea {
     width: 100%;
     height: 400px;
     padding: 15px;
-    border: 2px solid var(--border);
+    padding-right: 50px;
+    border: none;
     border-radius: 8px;
     font-family: 'Courier New', Courier, monospace;
     font-size: 0.85rem;
@@ -188,14 +198,41 @@ textarea {
     color: var(--text);
 }
 
-textarea:focus {
+.output-area textarea:focus {
     outline: none;
-    border-color: var(--primary);
-    box-shadow: 0 0 0 3px var(--focus-ring);
 }
 
-#outputJson {
-    background-color: var(--surface);
+/* Icon Actions */
+.icon-actions {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    gap: 8px;
+    z-index: 10;
+}
+
+.icon-button {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    font-size: 1.2rem;
+    padding: 6px 10px;
+    cursor: pointer;
+    color: var(--text);
+    transition: all var(--transition-speed);
+    border-radius: 6px;
+}
+
+.icon-button:hover {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+    transform: scale(1.1);
+}
+
+.icon-button:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--focus-ring);
 }
 
 /* Button Section */
@@ -365,7 +402,7 @@ footer {
         justify-content: center;
     }
 
-    textarea {
+    .output-area textarea {
         height: 300px;
     }
 }
@@ -387,7 +424,7 @@ footer {
         font-size: 0.9rem;
     }
 
-    textarea {
+    .output-area textarea {
         font-size: 0.75rem;
     }
 }
