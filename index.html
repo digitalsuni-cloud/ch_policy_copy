@@ -36,12 +36,35 @@
             <div class="textarea-section">
                 <div class="input-panel">
                     <h2>Original JSON</h2>
-                    <textarea id="inputJson" placeholder="Or paste your CloudHealth policy JSON here..."></textarea>
+                    <div class="output-area">
+                        <textarea id="inputJson" placeholder="Or paste your CloudHealth policy JSON here..."></textarea>
+                        <div class="icon-actions">
+                            <button class="icon-button" onclick="prettifyJson('inputJson')" title="Prettify JSON" aria-label="Prettify original JSON">
+                                ✨
+                            </button>
+                            <button class="icon-button" onclick="copyOutput('inputJson')" title="Copy to clipboard" aria-label="Copy original JSON to clipboard">
+                                📋
+                            </button>
+                            <button class="icon-button" onclick="clearTextarea('inputJson')" title="Clear content" aria-label="Clear original JSON">
+                                🗑️
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="output-panel">
                     <h2>Transformed JSON</h2>
-                    <textarea id="outputJson" readonly placeholder="Transformed JSON will appear here..."></textarea>
+                    <div class="output-area">
+                        <textarea id="outputJson" readonly placeholder="Transformed JSON will appear here..."></textarea>
+                        <div class="icon-actions">
+                            <button class="icon-button" onclick="copyOutput('outputJson')" title="Copy to clipboard" aria-label="Copy transformed JSON to clipboard">
+                                📋
+                            </button>
+                            <button class="icon-button" onclick="downloadOutput('outputJson', 'json')" title="Download JSON file" aria-label="Download transformed JSON file">
+                                💾
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
