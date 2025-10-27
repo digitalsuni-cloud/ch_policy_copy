@@ -388,7 +388,7 @@ function transformPolicy(obj) {
         const newObj = {};
         
         for (const key in obj) {
-            // Skip 'id', 'uuid', and 'perspective' fields except in specific contexts
+            // Skip 'id', 'uuid', 'perspective', and 'groups' fields except in specific contexts
             if (key === 'id' || key === 'uuid') {
                 if (!shouldKeepId(obj, key)) {
                     continue;
@@ -397,6 +397,11 @@ function transformPolicy(obj) {
             
             // Skip 'perspective' field at policy level
             if (key === 'perspective') {
+                continue;
+            }
+            
+            // Skip 'groups' field in blocks
+            if (key === 'groups') {
                 continue;
             }
             
