@@ -229,5 +229,92 @@ function transformActions(actions) {
         
         // Add _links object
         if (action.id) {
-            transforme
+            transformed._links = {
+                self: {
+                    href: `/v1/actions/action_configs/${action.id}`
+                }
+            };
+        }
+        
+        // Add params if exists
+        if (action.params) {
+            transformed.params = transformPolicy(action.params);
+        }
+        
+        return transformed;
+    });
+}
 
+// Download the transformed JSON
+function downloadJSON() {
+    if (!transformedData) {
+        showStatus('No transformed data to download', 'error');
+        return;
+    }
+
+    const jsonStr = JSON.stringify(transformedData, null, 4);
+    const blob = new Blob([jsonStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${originalFileName}_transformed.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    showStatus('✓ File downloaded successfully!', 'success');
+}
+
+// Clear all inputs and outputs
+function clearAll() {
+    inputJson.value = '';
+    outputJson.value = '';
+    fileInput.value = '';
+    fileNameDisplay.textContent = 'Choose JSON file or drag & drop';
+    transformedData = null;
+    originalFileName = 'policy';
+    downloadBtn.disabled = true;
+    statusMessage.textContent = '';
+    statusMessage.className = 'status-message';
+}
+
+// Show status message
+function showStatus(message, type) {
+    statusMessage.textContent = message;
+    statusMessage.className = `status-message ${type}`;
+    
+    if (type === 'success') {
+        setTimeout(() => {
+            if (statusMessage.classList.contains('success')) {
+                statusMessage.textContent = '';
+                statusMessage.className = 'status-message';
+            }
+        }, 5000);
+    }
+}
+
+// Enable textarea paste and typing
+inputJson.addEventListener('input', () => {
+    if (inputJson.value.trim()) {
+        fileNameDisplay.textContent = 'JSON pasted in editor';
+    }
+});
+
+// Keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+    // Ctrl/Cmd + Enter to transform
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        e.preventDefault();
+        transformJSON();
+    }
+    
+    // Ctrl/Cmd + S to download
+    if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault();
+        if (!downloadBtn.disabled) {
+            downloadJSON();
+        }
+    }
+});
