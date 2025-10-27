@@ -38,6 +38,7 @@
                     <h2>Original JSON</h2>
                     <div class="output-area">
                         <textarea id="inputJson" placeholder="Or paste your CloudHealth policy JSON here..."></textarea>
+                        <div id="inputJsonViewer" class="json-viewer"></div>
                         <div class="icon-actions">
                             <button class="icon-button" onclick="prettifyJson('inputJson')" title="Prettify JSON" aria-label="Prettify original JSON">
                                 ✨
@@ -56,6 +57,7 @@
                     <h2>Transformed JSON</h2>
                     <div class="output-area">
                         <textarea id="outputJson" readonly placeholder="Transformed JSON will appear here..."></textarea>
+                        <div id="outputJsonViewer" class="json-viewer"></div>
                         <div class="icon-actions">
                             <button class="icon-button" onclick="copyOutput('outputJson')" title="Copy to clipboard" aria-label="Copy transformed JSON to clipboard">
                                 📋
