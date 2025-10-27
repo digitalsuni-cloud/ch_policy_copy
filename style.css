@@ -180,6 +180,8 @@ header h1 {
 .output-panel {
     display: flex;
     flex-direction: column;
+    min-width: 0;
+    overflow: hidden;
 }
 
 .input-panel h2,
@@ -190,6 +192,27 @@ header h1 {
     font-weight: 600;
 }
 
+/* Console Section */
+.console-section {
+    margin-top: 30px;
+    padding-top: 30px;
+    border-top: 2px solid var(--border);
+}
+
+.console-section h2 {
+    font-size: 1.3rem;
+    margin-bottom: 10px;
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.console-description {
+    color: var(--text-light);
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+    line-height: 1.5;
+}
+
 /* Output Area with Icon Actions */
 .output-area {
     position: relative;
@@ -197,6 +220,7 @@ header h1 {
     border: 2px solid var(--border);
     border-radius: 8px;
     padding: 0;
+    overflow: hidden;
 }
 
 .output-area textarea {
@@ -213,6 +237,14 @@ header h1 {
     background-color: var(--surface);
     color: var(--text);
     line-height: 1.5;
+    overflow-x: auto;
+    overflow-y: auto;
+    white-space: pre;
+    word-wrap: normal;
+}
+
+.console-section .output-area textarea {
+    height: 150px;
 }
 
 .output-area textarea:focus {
@@ -225,7 +257,8 @@ header h1 {
     height: 400px;
     padding: 15px;
     padding-right: 50px;
-    overflow: auto;
+    overflow-x: auto;
+    overflow-y: auto;
     font-family: 'Courier New', Courier, monospace;
     font-size: 0.85rem;
     line-height: 1.5;
@@ -233,6 +266,7 @@ header h1 {
     color: var(--text);
     border-radius: 8px;
     white-space: pre;
+    word-wrap: normal;
     display: none;
 }
 
@@ -471,6 +505,10 @@ footer {
     .output-area textarea,
     .json-viewer {
         height: 300px;
+    }
+    
+    .console-section .output-area textarea {
+        height: 150px;
     }
 }
 
