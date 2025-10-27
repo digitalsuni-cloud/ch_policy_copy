@@ -350,6 +350,19 @@ function filterActions(actions) {
     });
 }
 
+// Clean filters - remove entries where ref starts with "Groupset"
+function cleanFilters(filters) {
+    if (!Array.isArray(filters)) return filters;
+    
+    // Filter out entries where ref starts with "Groupset"
+    return filters.filter(filter => {
+        if (filter && filter.ref && typeof filter.ref === 'string') {
+            return !filter.ref.startsWith('Groupset');
+        }
+        return true;
+    });
+}
+
 // Clean Slack recipient params based on type
 function cleanSlackParams(params) {
     if (!params || !params.slack || !params.slack.recipient) {
@@ -402,6 +415,25 @@ function transformPolicy(obj) {
             
             // Skip 'groups' field in blocks
             if (key === 'groups') {
+                continue;
+            }
+            
+            // Transform scope field - set to empty object if name starts with "Groupset"
+            if (key === 'scope' && obj[key] !== null && typeof obj[key] === 'object') {
+                if (obj[key].name && obj[key].name.startsWith('Groupset')) {
+                    newObj[key] = {};
+                    continue;
+                }
+            }
+            
+            // Clean filters in conditions - remove entries where ref starts with "Groupset"
+            if (key === 'filters' && Array.isArray(obj[key])) {
+                const cleanedFilters = cleanFilters(obj[key]);
+                if (cleanedFilters.length > 0) {
+                    newObj[key] = cleanedFilters.map(filter => transformPolicy(filter));
+                } else {
+                    newObj[key] = [];
+                }
                 continue;
             }
             
