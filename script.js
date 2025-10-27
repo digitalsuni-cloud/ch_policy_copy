@@ -14,12 +14,33 @@ const loadingIndicator = document.getElementById('loadingIndicator');
 let transformedData = null;
 let originalFileName = 'policy';
 
-// Theme Toggle Functionality
+// Theme Toggle Functionality with Auto Detection
 function initTheme() {
-    const savedTheme = localStorage.getItem('theme') || 'light';
-    document.documentElement.setAttribute('data-theme', savedTheme);
-    updateThemeIcon(savedTheme);
+    // Check if user has a saved preference
+    const savedTheme = localStorage.getItem('theme');
+    
+    if (savedTheme) {
+        // Use saved theme
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        updateThemeIcon(savedTheme);
+    } else {
+        // Auto-detect system preference
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const autoTheme = prefersDark ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', autoTheme);
+        updateThemeIcon(autoTheme);
+    }
 }
+
+// Listen for system theme changes
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+    // Only auto-update if user hasn't manually set a preference
+    if (!localStorage.getItem('theme')) {
+        const newTheme = e.matches ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', newTheme);
+        updateThemeIcon(newTheme);
+    }
+});
 
 function updateThemeIcon(theme) {
     themeToggle.textContent = theme === 'dark' ? '☀️' : '🌙';
@@ -126,7 +147,7 @@ function transformJSON() {
     }
 }
 
-// Recursive function to remove all 'id' fields and transform structure
+// Recursive function to remove all 'id' and 'uuid' fields and transform structure
 function transformPolicy(obj) {
     if (Array.isArray(obj)) {
         return obj.map(item => transformPolicy(item));
@@ -134,10 +155,9 @@ function transformPolicy(obj) {
         const newObj = {};
         
         for (const key in obj) {
-            // Skip all 'id' fields except those in nested objects we want to keep
-            if (key === 'id') {
-                // Keep id in specific contexts like measure.id, topic.id, action_library.id
-                if (!shouldKeepId(obj)) {
+            // Skip 'id' and 'uuid' fields except in specific contexts
+            if (key === 'id' || key === 'uuid') {
+                if (!shouldKeepId(obj, key)) {
                     continue;
                 }
             }
@@ -164,15 +184,33 @@ function transformPolicy(obj) {
     return obj;
 }
 
-// Determine if we should keep the 'id' field based on object properties
-function shouldKeepId(obj) {
-    // Keep id for: measure, topic, action_library, and top-level action configs
-    if (obj.hasOwnProperty('label') || 
-        obj.hasOwnProperty('measure_id') || 
-        obj.hasOwnProperty('policy_type') ||
-        (obj.hasOwnProperty('action_type') && obj.hasOwnProperty('name') && obj.hasOwnProperty('action_library'))) {
-        return true;
+// Determine if we should keep the 'id' or 'uuid' field based on object properties
+function shouldKeepId(obj, key) {
+    // Only keep id in very specific contexts: measure, topic, action_library
+    if (key === 'id') {
+        if (obj.hasOwnProperty('measure_id') && obj.hasOwnProperty('label')) {
+            // This is a measure object
+            return true;
+        }
+        if (obj.hasOwnProperty('policy_type') && obj.hasOwnProperty('label')) {
+            // This is a topic object
+            return true;
+        }
+        if (obj.hasOwnProperty('version') && obj.hasOwnProperty('description') && obj.hasOwnProperty('name') && !obj.hasOwnProperty('policy')) {
+            // This is an action_library object (has version but not policy wrapper)
+            return true;
+        }
+        if (obj.hasOwnProperty('action_type') && obj.hasOwnProperty('action_library') && obj.hasOwnProperty('name')) {
+            // This is an action config object
+            return true;
+        }
     }
+    
+    // Never keep uuid fields
+    if (key === 'uuid') {
+        return false;
+    }
+    
     return false;
 }
 
@@ -188,7 +226,7 @@ function transformActionInstructions(instructions) {
             transformed.params = transformPolicy(instruction.params);
         }
         
-        // Set is_enabled to true instead of false
+        // Set is_enabled to true
         transformed.is_enabled = true;
         
         return transformed;
