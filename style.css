@@ -11,6 +11,14 @@
     --success: #27ae60;
     --focus-ring: rgba(52, 152, 219, 0.4);
     --transition-speed: 0.3s;
+    
+    /* JSON Syntax Highlighting - Light Theme */
+    --json-key: #0451a5;
+    --json-string: #0a8d48;
+    --json-number: #098658;
+    --json-boolean: #0000ff;
+    --json-null: #0000ff;
+    --json-brackets: #000000;
 }
 
 [data-theme="dark"] {
@@ -25,6 +33,14 @@
     --error: #e74c3c;
     --success: #27ae60;
     --focus-ring: rgba(52, 152, 219, 0.6);
+    
+    /* JSON Syntax Highlighting - Dark Theme */
+    --json-key: #9cdcfe;
+    --json-string: #ce9178;
+    --json-number: #b5cea8;
+    --json-boolean: #569cd6;
+    --json-null: #569cd6;
+    --json-brackets: #d4d4d4;
 }
 
 * {
@@ -196,10 +212,60 @@ header h1 {
     transition: border-color var(--transition-speed);
     background-color: var(--surface);
     color: var(--text);
+    line-height: 1.5;
 }
 
 .output-area textarea:focus {
     outline: none;
+}
+
+/* JSON Syntax Highlighting */
+.json-viewer {
+    width: 100%;
+    height: 400px;
+    padding: 15px;
+    padding-right: 50px;
+    overflow: auto;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    background-color: var(--surface);
+    color: var(--text);
+    border-radius: 8px;
+    white-space: pre;
+    display: none;
+}
+
+.json-viewer.active {
+    display: block;
+}
+
+.json-key {
+    color: var(--json-key);
+    font-weight: 500;
+}
+
+.json-string {
+    color: var(--json-string);
+}
+
+.json-number {
+    color: var(--json-number);
+}
+
+.json-boolean {
+    color: var(--json-boolean);
+    font-weight: 600;
+}
+
+.json-null {
+    color: var(--json-null);
+    font-weight: 600;
+}
+
+.json-brackets {
+    color: var(--json-brackets);
+    font-weight: bold;
 }
 
 /* Icon Actions */
@@ -402,7 +468,8 @@ footer {
         justify-content: center;
     }
 
-    .output-area textarea {
+    .output-area textarea,
+    .json-viewer {
         height: 300px;
     }
 }
@@ -424,7 +491,8 @@ footer {
         font-size: 0.9rem;
     }
 
-    .output-area textarea {
+    .output-area textarea,
+    .json-viewer {
         font-size: 0.75rem;
     }
 }
