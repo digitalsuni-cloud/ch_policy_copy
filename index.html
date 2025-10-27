@@ -7,6 +7,11 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!-- Theme Toggle Button -->
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+        🌙
+    </button>
+
     <div class="container">
         <header>
             <h1>CloudHealth Policy JSON Transformer</h1>
@@ -71,6 +76,12 @@
         <footer>
             <p>Created for CloudHealth Policy Management</p>
         </footer>
+    </div>
+
+    <!-- Loading Indicator -->
+    <div class="loading-indicator" id="loadingIndicator">
+        <div class="spinner"></div>
+        <span>Processing...</span>
     </div>
 
     <script src="script.js"></script>
