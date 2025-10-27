@@ -340,6 +340,16 @@ function transformJSON() {
     }
 }
 
+// Filter out "Send Slack Message" actions
+function filterActions(actions) {
+    if (!Array.isArray(actions)) return actions;
+    
+    // Filter out actions with name "Send Slack Message"
+    return actions.filter(action => {
+        return action.name !== 'Send Slack Message';
+    });
+}
+
 // Clean Slack recipient params based on type
 function cleanSlackParams(params) {
     if (!params || !params.slack || !params.slack.recipient) {
@@ -398,8 +408,11 @@ function transformPolicy(obj) {
                 // Transform action_instructions
                 newObj[key] = transformActionInstructions(obj[key]);
             } else if (key === 'actions') {
-                // Transform actions array
-                newObj[key] = transformActions(obj[key]);
+                // Filter and transform actions array
+                const filteredActions = filterActions(obj[key]);
+                if (filteredActions.length > 0) {
+                    newObj[key] = transformActions(filteredActions);
+                }
             } else if (key === 'params' && obj.hasOwnProperty('action_type') && obj.action_type === 'send_slack_message_action') {
                 // Clean Slack params
                 newObj[key] = cleanSlackParams(transformPolicy(obj[key]));
