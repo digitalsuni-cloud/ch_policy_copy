@@ -340,6 +340,36 @@ function transformJSON() {
     }
 }
 
+// Clean Slack recipient params based on type
+function cleanSlackParams(params) {
+    if (!params || !params.slack || !params.slack.recipient) {
+        return params;
+    }
+    
+    const recipientType = params.slack.recipient.type;
+    const cleanedParams = JSON.parse(JSON.stringify(params)); // Deep clone
+    
+    if (recipientType === 'user') {
+        // For user type: remove Perspective, Slack account, and Filters if they exist
+        if (cleanedParams.slack.perspective) {
+            delete cleanedParams.slack.perspective;
+        }
+        if (cleanedParams.slack.account) {
+            delete cleanedParams.slack.account;
+        }
+        if (cleanedParams.slack.filters) {
+            delete cleanedParams.slack.filters;
+        }
+    } else if (recipientType === 'group' || recipientType === 'account') {
+        // For group/account type: remove Filters if they exist
+        if (cleanedParams.slack.filters) {
+            delete cleanedParams.slack.filters;
+        }
+    }
+    
+    return cleanedParams;
+}
+
 // Recursive function to remove all 'id' and 'uuid' fields and transform structure
 function transformPolicy(obj) {
     if (Array.isArray(obj)) {
@@ -348,11 +378,16 @@ function transformPolicy(obj) {
         const newObj = {};
         
         for (const key in obj) {
-            // Skip 'id' and 'uuid' fields except in specific contexts
+            // Skip 'id', 'uuid', and 'perspective' fields except in specific contexts
             if (key === 'id' || key === 'uuid') {
                 if (!shouldKeepId(obj, key)) {
                     continue;
                 }
+            }
+            
+            // Skip 'perspective' field at policy level
+            if (key === 'perspective') {
+                continue;
             }
             
             // Transform specific fields
@@ -365,6 +400,9 @@ function transformPolicy(obj) {
             } else if (key === 'actions') {
                 // Transform actions array
                 newObj[key] = transformActions(obj[key]);
+            } else if (key === 'params' && obj.hasOwnProperty('action_type') && obj.action_type === 'send_slack_message_action') {
+                // Clean Slack params
+                newObj[key] = cleanSlackParams(transformPolicy(obj[key]));
             } else {
                 // Recursively transform other fields
                 newObj[key] = transformPolicy(obj[key]);
@@ -416,7 +454,8 @@ function transformActionInstructions(instructions) {
         
         // Only keep specific fields
         if (instruction.params) {
-            transformed.params = transformPolicy(instruction.params);
+            // Clean Slack params in action_instructions
+            transformed.params = cleanSlackParams(transformPolicy(instruction.params));
         }
         
         // Set is_enabled to true
@@ -467,9 +506,13 @@ function transformActions(actions) {
             };
         }
         
-        // Add params if exists
+        // Add params if exists - with Slack cleaning
         if (action.params) {
-            transformed.params = transformPolicy(action.params);
+            if (action.action_type === 'send_slack_message_action') {
+                transformed.params = cleanSlackParams(transformPolicy(action.params));
+            } else {
+                transformed.params = transformPolicy(action.params);
+            }
         }
         
         return transformed;
